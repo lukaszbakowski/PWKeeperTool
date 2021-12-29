@@ -23,9 +23,9 @@ namespace PWKeeper
             this.TODO = TODO;
             this.Path = Path;
         }
-        public async Task WriteAsync()
+        public void WriteAsync()
         {
-            await File.WriteAllTextAsync(@".\Output.txt", Input); //you will see file in debug folder, you can change launchSettings as needed.
+            File.WriteAllText(@".\Output.txt", Input); //you will see file in debug folder, you can change launchSettings as needed.
         }
         public void Read()
         {

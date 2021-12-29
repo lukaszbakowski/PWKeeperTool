@@ -18,7 +18,7 @@ namespace PWKeeper.Algorithms
     {
 
         
-        private readonly string Chars = " 1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM\r\n!@#$%^&*()-_=+[]{}\\|;:'\",<.>/?";
+        private readonly string Chars = " 1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM\r\n!@#$%^&*()-_=+[]{}\\|;:\'\",<.>/?\t";
         public LookyAlgo(string password) : base(password)
         {
             AlgorithmName = "lpwka"; //Lukas (or Looky) PassWord Keeper Algorithm, use "--algo lpwka"
@@ -27,24 +27,29 @@ namespace PWKeeper.Algorithms
         {
             string[] inputs = input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             string lastHash = "SomeSecretSaltOverHereYouCanChangeItAsNeededInYourPrivateRepo";
+            //int counter = 0;
             foreach (string s in inputs)
             {
                 lastHash = Password + lastHash;
                 lastHash = HashFunction(lastHash);
-                foreach(char c in Chars)
+                Console.WriteLine("checking for: " + s);
+                foreach (char c in Chars)
                 {
                     string toHash = Password + lastHash + c;
                     string checkForHash = HashFunction(toHash);
+                    //Console.WriteLine(checkForHash +" ==? "+ s);
                     if(checkForHash == s)
                     {
                         lastHash = checkForHash;
                         Output.Append(c);
+                        //Console.WriteLine(lastHash +" dla: "+c);
                         break;
                     }
                 }
-                //Console.WriteLine(s);
+                //counter++;
             }
-            if(Output.Length == 0) //make a fake output if password is uncorrect
+            //Console.WriteLine(counter);
+            if (Output.Length == 0) //make a fake output if password is uncorrect
             {
                 Random random = new Random();
                 for(int i = 0; i < inputs.Length; i++)
@@ -59,6 +64,7 @@ namespace PWKeeper.Algorithms
         public override string Encode(string input)
         {
             string lastHash = "SomeSecretSaltOverHereYouCanChangeItAsNeededInYourPrivateRepo";
+            int counter = 0;
             foreach (char c in input)
             {
                  lastHash = Password + lastHash;
@@ -67,10 +73,13 @@ namespace PWKeeper.Algorithms
                  //Console.WriteLine(toHash);
                  lastHash = HashFunction(toHash);
                  Output.Append(lastHash).Append("\n");
+                counter++;
             }
+            string output = Output.ToString();
             
-            Console.WriteLine(Output.ToString());
-            return Output.ToString();
+            Console.WriteLine(output);
+            Console.WriteLine(counter);
+            return output;
         }
         private string HashFunction(string toHash)
         {

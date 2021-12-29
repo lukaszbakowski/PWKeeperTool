@@ -2,11 +2,11 @@
   "profiles": {
     "PWKeeperDecrypt": {
       "commandName": "Project",
-      "commandLineArgs": "--encrypt .\\Example\\fileBeforeHashed.json --algo lpwka"
+      "commandLineArgs": "--decrypt .\\Example\\output.txt --algo lpwka"
     },
     "PWKeeperEncrypt": {
       "commandName": "Project",
-      "commandLineArgs": "--decrypt .\\Example\\FileAfterHashed.txt --algo lpwka"
+      "commandLineArgs": "--encrypt .\\Example\\passwords.html --algo lpwka"
     },
     "Default": {
       "commandName": "Project",

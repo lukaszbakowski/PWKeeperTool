@@ -22,7 +22,7 @@ namespace PWKeeper
             }
         }
 
-        public async void MenuNav(IDictionary<string, string> args)
+        public void MenuNav(IDictionary<string, string> args)
         {
             foreach ((string key, string value) in args)
             {
@@ -91,7 +91,7 @@ namespace PWKeeper
                 {
                     HelpNotification();
                 }
-                await fileHandler.WriteAsync();
+                fileHandler.WriteAsync();
                 Console.WriteLine("success");
                 Console.WriteLine();
             } else
