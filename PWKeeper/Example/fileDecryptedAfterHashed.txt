@@ -1,0 +1,14 @@
+[
+  {
+    "domain": "elo.pl",
+    "email": "test@o2.pl",
+    "login": "nologin",
+    "password": "secretpw"
+  },
+  {
+    "domain": "elo2.pl",
+    "email": "test2@o2.pl",
+    "login": "nologin2",
+    "password": "secretpw2"
+  }
+]
