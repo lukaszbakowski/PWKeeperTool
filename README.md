@@ -23,3 +23,8 @@ Icon=PWKeeper.Client.exe
 ```
 3. Save the file as autorun.inf in the root of the USB flash drive
 4. Copy source of PWKeeperTool to USB
+
+### How to create an new account
+while first signIn if there is no existing login name it will get automatically created. 
+Account is working locally which you can delete
+in ./data folder.
