@@ -10,6 +10,10 @@ PWKeeperTool is giving you full controll on your files which storing passwords l
 and are hard coded. You can storage all passwords with just one. It is highly recomened
 to use with encrypted USB drive.
 
+### Usage:
+ - when we forget any password
+ - for our familly if something happens to us: testament, etc.
+
 ### Manual install on USB:
 
 1. Run "Notepad"
@@ -24,7 +28,7 @@ Icon=PWKeeper.Client.exe
 3. Save the file as autorun.inf in the root of the USB flash drive
 4. Copy source of PWKeeperTool to USB
 
-### How to create an new account
+### How to create a new account
 while first signIn if there is no existing login name it will get automatically created. 
 Account is working locally which you can delete
 in ./data folder.
