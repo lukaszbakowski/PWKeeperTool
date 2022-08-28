@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PWKeeper.Algorithms
 {
-    internal class AlgorithmBase : IAlgorithm
+    public class AlgorithmBase : IAlgorithm
     {
         public string AlgorithmName { get; protected set; }
         protected readonly StringBuilder Output;

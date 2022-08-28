@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PWKeeper.Core\PWKeeper.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="_Imports.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

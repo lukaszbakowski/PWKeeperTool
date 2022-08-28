@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebView.Wpf;
+using PWKeeper.Core;
 
 namespace PWKeeper.Client
 {
@@ -28,6 +29,7 @@ namespace PWKeeper.Client
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
+            serviceCollection.AddPWKeeperCore();
             Resources.Add("services", serviceCollection.BuildServiceProvider());
         }
     }

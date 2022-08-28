@@ -32,3 +32,6 @@ Icon=PWKeeper.Client.exe
 while first signIn if there is no existing login name it will get automatically created. 
 Account is working locally which you can delete
 in ./data folder.
+
+### Features that might be added in future:
+- storing images

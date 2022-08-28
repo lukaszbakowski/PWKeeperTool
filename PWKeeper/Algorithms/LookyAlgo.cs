@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 
 namespace PWKeeper.Algorithms
 {
-    internal class LookyAlgo : AlgorithmBase
+    public class LookyAlgo : AlgorithmBase
     {
 
         
