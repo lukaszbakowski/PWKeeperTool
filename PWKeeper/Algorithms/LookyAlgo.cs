@@ -23,17 +23,18 @@ namespace PWKeeper.Algorithms
         {
             AlgorithmName = "lpwka"; //Lukas (or Looky) PassWord Keeper Algorithm, use "--algo lpwka"
         }
-        public override string Decode(string input)
+        public override async Task<string> Decode(string input)
         {
-            string[] inputs = input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            StringBuilder Output = new StringBuilder();
+            string[] inputs = input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             string lastHash = "SomeSecretSaltOverHereYouCanChangeItAsNeededInYourPrivateRepo";
-            //int counter = 0;
+            int counter = 0;
             foreach (string s in inputs)
             {
                 lastHash = Password + lastHash;
                 lastHash = HashFunction(lastHash);
                 Console.WriteLine("checking for: " + s);
-                foreach (char c in Chars)
+                foreach (var c in Chars)
                 {
                     string toHash = Password + lastHash + c;
                     string checkForHash = HashFunction(toHash);
@@ -46,9 +47,9 @@ namespace PWKeeper.Algorithms
                         break;
                     }
                 }
-                //counter++;
+                counter++;
             }
-            //Console.WriteLine(counter);
+            Console.WriteLine(counter);
             if (Output.Length == 0) //make a fake output if password is uncorrect
             {
                 Random random = new Random();
@@ -58,14 +59,15 @@ namespace PWKeeper.Algorithms
                         .Select(s => s[random.Next(s.Length)]).ToArray()));
                 }
             }
-            return Output.ToString();
+            return await Task.FromResult(Output.ToString());
         }
         
-        public override string Encode(string input)
+        public override async Task<string> Encode(string input)
         {
+            StringBuilder Output = new StringBuilder();
             string lastHash = "SomeSecretSaltOverHereYouCanChangeItAsNeededInYourPrivateRepo";
             int counter = 0;
-            foreach (char c in input)
+            foreach (var c in input)
             {
                  lastHash = Password + lastHash;
                  lastHash = HashFunction(lastHash);
@@ -79,7 +81,7 @@ namespace PWKeeper.Algorithms
             
             Console.WriteLine(output);
             Console.WriteLine(counter);
-            return output;
+            return await Task.FromResult(output);
         }
         private string HashFunction(string toHash)
         {

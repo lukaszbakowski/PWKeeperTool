@@ -22,7 +22,7 @@ namespace PWKeeper
             }
         }
 
-        public void MenuNav(IDictionary<string, string> args)
+        public async void MenuNav(IDictionary<string, string> args)
         {
             foreach ((string key, string value) in args)
             {
@@ -83,10 +83,10 @@ namespace PWKeeper
                 fileHandler.Read();
                 if(fileHandler.TODO == FileHandler.ALGO.ENCODE)
                 {
-                    fileHandler.Input = algorithm.Encode(fileHandler.Input);
+                    fileHandler.Input = await algorithm.Encode(fileHandler.Input);
                 } else if(fileHandler.TODO == FileHandler.ALGO.DECODE)
                 {
-                    fileHandler.Input = algorithm.Decode(fileHandler.Input);
+                    fileHandler.Input = await algorithm.Decode(fileHandler.Input);
                 } else
                 {
                     HelpNotification();

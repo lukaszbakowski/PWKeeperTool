@@ -9,21 +9,19 @@ namespace PWKeeper.Algorithms
     public class AlgorithmBase : IAlgorithm
     {
         public string AlgorithmName { get; protected set; }
-        protected readonly StringBuilder Output;
         protected string Password;
         public AlgorithmBase(string password)
         {
             AlgorithmName = "exampleName";
-            Output = new();
             Password = password;
         }
-        public virtual string Decode(string input)
+        public virtual async Task<string> Decode(string input)
         {
-            return Output.ToString();
+            return await Task.FromResult(input.ToString());
         }
-        public virtual string Encode(string input)
+        public virtual async Task<string> Encode(string input)
         {
-            return Output.ToString();
+            return await Task.FromResult(input.ToString());
         }
     }
 }

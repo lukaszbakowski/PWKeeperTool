@@ -7,7 +7,7 @@ namespace PWKeeper.Core
     {
         public static IServiceCollection AddPWKeeperCore(this IServiceCollection service)
         {
-            service.AddSingleton<StorageBuilder>();
+            service.AddSingleton<StorageHandler>();
             return service;
         }
     }
