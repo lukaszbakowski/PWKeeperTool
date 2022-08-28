@@ -37,7 +37,7 @@ namespace PWKeeper.Core
                 }
                 else
                 {
-                    UpdateStorageFile();
+                    await UpdateStorageFile();
                 }
             }
             catch (Exception ex) {
@@ -54,7 +54,7 @@ namespace PWKeeper.Core
             return string.Empty;
         }
 
-        private async void UpdateStorageFile()
+        private async Task<bool> UpdateStorageFile()
         {
             try
             {
@@ -64,21 +64,28 @@ namespace PWKeeper.Core
                     string output = await algorithm.Encode(input);
                     await File.WriteAllTextAsync(Path, output);
                 }
-            } catch(Exception ex) { }
+            } catch(Exception ex) { return false; }
+            return true;
         }
 
-        public void AddItem(StorageItemModel item)
+        public async Task<bool> AddItemAsync(StorageItemModel item)
         {
             GetStorage.Add(item);
-            UpdateStorageFile();
+            await UpdateStorageFile();
+            return true;
         }
-        public void RemoveItem(StorageItemModel item)
+        public async Task<bool> RemoveItemAsync(StorageItemModel item)
         {
-            
+            GetStorage.Remove(item);
+            await UpdateStorageFile();
+            return true;
         }
-        public void UpdateItem(StorageItemModel item)
+        public async Task<bool> UpdateItemAsync(int index, StorageItemModel item)
         {
-
+            GetStorage.RemoveAt(index);
+            GetStorage.Add(item);
+            await UpdateStorageFile();
+            return true;
         }
     }
 }

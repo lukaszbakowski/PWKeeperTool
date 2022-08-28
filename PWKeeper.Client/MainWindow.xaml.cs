@@ -15,6 +15,10 @@ using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebView.Wpf;
 using PWKeeper.Core;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.IO;
+using PWKeeper.Core.Models;
 
 namespace PWKeeper.Client
 {
@@ -27,7 +31,15 @@ namespace PWKeeper.Client
         {
             InitializeComponent();
 
+            var builder = new ConfigurationBuilder()
+                 .SetBasePath(Directory.GetCurrentDirectory())
+                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            IConfiguration config = builder.Build();
+            TestModel test = new();
+            config.Bind("Test", test);
+
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(test);
             serviceCollection.AddWpfBlazorWebView();
             serviceCollection.AddPWKeeperCore();
             Resources.Add("services", serviceCollection.BuildServiceProvider());

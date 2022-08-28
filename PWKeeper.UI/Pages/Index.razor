@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject StorageHandler Storage
+@inject TestModel test
 
 <PageTitle>Index</PageTitle>
 
@@ -12,7 +13,7 @@
         <label for="formGroupExampleInput2">Password</label>
         <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Another input" @bind="password" disabled=@loggedIn>
     </div>
-    <button class="btn btn-primary mt-2" @onclick=SignIn>SignIn</button>
+    <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
 </div>
 @if(storage != null) {
     @foreach(var item in storage) {
@@ -24,7 +25,7 @@
 <div>
     <button @onclick=AddItem>test</button>
 </div>
-
+@test.Secret
 @code {
     private string? login { get; set; }
     private string? password { get; set; }
@@ -47,7 +48,7 @@
             StateHasChanged();
         }
     }
-    private void AddItem() {
+    private async void AddItem() {
         var item = new StorageItemModel
             {
                 Name = "test",
@@ -55,7 +56,7 @@
                 Email = "test",
                 Login = "test"
             };
-        Storage.AddItem(item);
+        await Storage.AddItemAsync(item);
         storage = Storage.GetStorage;
     }
 }
