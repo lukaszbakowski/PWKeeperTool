@@ -13,18 +13,45 @@ namespace PWKeeper.Core
     public class StorageHandler
     {
         private IAlgorithm? algorithm;
-        private string Path = @".\wwwroot\data\";
+        private string Path { get
+            {
+                return _path;
+            } set
+            {
+                var output = new StringBuilder();
+                output.Append(@".\wwwroot\data\");
+                output.Append(value);
+                output.Append(".txt");
+                _path = output.ToString();
+            } 
+        }
+        private string _path = string.Empty;
+        private string Backup { get
+            {
+                DateTime dateTime = DateTime.Now;
+                var output = new StringBuilder();
+                output.Append(@".\wwwroot\backup\");
+                output.Append(dateTime.ToString("yyyy.MM.dd.HH.mm.ss"));
+                output.Append(".txt");
+                return output.ToString();
+            }
+        }
         public List<StorageItemModel> GetStorage { get; private set; }
+        public string ExceptionMessage { get; private set; }
         public StorageHandler() {
             GetStorage = new();
         }
-        public async Task<List<StorageItemModel>> Build(string login, IAlgorithm algorithm)
+        public async Task<bool> Build(string login, IAlgorithm algorithm)
         {
             this.algorithm = algorithm;
-            Path = Path + login + ".txt";
+            Path = login;
 
             try
             {
+                if(login == string.Empty || login == null || algorithm == null)
+                {
+                    throw new ArgumentException("bad input login or algo");
+                }
                 if (File.Exists(Path))
                 {
                     string fileContent = await File.ReadAllTextAsync(Path);
@@ -41,9 +68,11 @@ namespace PWKeeper.Core
                 }
             }
             catch (Exception ex) {
-                return GetStorage;
+                ExceptionMessage = "singIn failed: " + ex.Message;
+                return false;
             }
-            return GetStorage;
+            ExceptionMessage = "sueccessfully loged in";
+            return true;
         }
         private async Task<string> Decode(string input)
         {
@@ -62,29 +91,56 @@ namespace PWKeeper.Core
                 {
                     string input = JsonSerializer.Serialize(GetStorage);
                     string output = await algorithm.Encode(input);
+
                     await File.WriteAllTextAsync(Path, output);
+                    await File.WriteAllTextAsync(Backup, output);
                 }
-            } catch(Exception ex) { return false; }
+            } catch(Exception ex) {
+                ExceptionMessage = ex.Message;
+                return false; 
+            }
             return true;
         }
 
         public async Task<bool> AddItemAsync(StorageItemModel item)
         {
-            GetStorage.Add(item);
-            await UpdateStorageFile();
+            try
+            {
+                GetStorage.Add(item);
+                await UpdateStorageFile();
+            }
+            catch (Exception ex)
+            {
+                ExceptionMessage = ex.Message;
+                return false;
+            }
             return true;
         }
         public async Task<bool> RemoveItemAsync(StorageItemModel item)
         {
-            GetStorage.Remove(item);
-            await UpdateStorageFile();
+            try
+            {
+                GetStorage.Remove(item);
+                await UpdateStorageFile();
+            } catch (Exception ex)
+            {
+                ExceptionMessage = ex.Message;
+                return false;
+            }
             return true;
         }
         public async Task<bool> UpdateItemAsync(int index, StorageItemModel item)
         {
-            GetStorage.RemoveAt(index);
-            GetStorage.Add(item);
-            await UpdateStorageFile();
+            try
+            {
+                GetStorage.RemoveAt(index);
+                GetStorage.Add(item);
+                await UpdateStorageFile();
+            } catch (Exception ex)
+            {
+                ExceptionMessage = ex.Message;
+                return false;
+            }
             return true;
         }
     }

@@ -4,33 +4,65 @@
 
 <PageTitle>Index</PageTitle>
 
-<div>
-    <div class="form-group">
-        <label for="formGroupExampleInput">Login</label>
-        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input" @bind="login" disabled=@loggedIn>
+@if(!loggedIn) {
+    <div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Login</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input" @bind="login" disabled=@loggedIn>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput2">Password</label>
+            <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Another input" @bind="password" disabled=@loggedIn>
+        </div>
+        <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
     </div>
-    <div class="form-group">
-        <label for="formGroupExampleInput2">Password</label>
-        <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Another input" @bind="password" disabled=@loggedIn>
-    </div>
-    <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
-</div>
-@if(storage != null) {
-    @foreach(var item in storage) {
-        <p>
-            @item.Name
-        </p>
+} else {
+    @if(storage != null) {
+        int i = 0;
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                @foreach (var item in storage) {
+                    i++;
+                    <tr>
+                        <th scope="row">@i</th>
+                        <td>@item.Name</td>
+                        <td>@item.Email</td>
+                        <td>@item.Password</td>
+                        <td>@item.Description</td>
+                        <td>delete</td>
+                        <td>update</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
+    <div>
+        <button @onclick=AddItem disabled=@btnSleep>test</button>
+    </div>
+    @test.Secret
 }
-<div>
-    <button @onclick=AddItem>test</button>
-</div>
-@test.Secret
+<p>
+    @Storage.ExceptionMessage
+</p>
+
 @code {
     private string? login { get; set; }
     private string? password { get; set; }
     private List<StorageItemModel>? storage { get; set; }
     private bool loggedIn = false;
+    private bool btnSleep = false;
 
     protected override void OnInitialized()
     {
@@ -41,22 +73,32 @@
     private async void SignIn() { 
         if ((login != null) && (password != null) && (login != string.Empty) && (password != string.Empty))
         {
-            storage = await Storage.Build(login, new LookyAlgo(password));
-            loggedIn = true;
-            login = string.Empty;
-            password = string.Empty;
+            if (await Storage.Build(login, new LookyAlgo(password)))
+            {
+                storage = Storage.GetStorage;
+                loggedIn = true;
+                login = string.Empty;
+                password = string.Empty;
+            }
+
             StateHasChanged();
         }
     }
-    private async void AddItem() {
+    private async Task<bool> AddItem() {
+
+        btnSleep = true;
         var item = new StorageItemModel
             {
                 Name = "test",
                 Description = "test",
+                Password = "test",
                 Email = "test",
                 Login = "test"
             };
         await Storage.AddItemAsync(item);
         storage = Storage.GetStorage;
+        await Task.Delay(1000);
+        btnSleep = false;
+        return true;
     }
 }
