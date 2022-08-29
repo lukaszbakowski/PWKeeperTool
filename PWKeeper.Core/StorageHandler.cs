@@ -50,7 +50,7 @@ namespace PWKeeper.Core
             {
                 if(login == string.Empty || login == null || algorithm == null)
                 {
-                    throw new ArgumentException("bad input login or algo");
+                    throw new Exception("bad input login or algo");
                 }
                 if (File.Exists(Path))
                 {
@@ -108,6 +108,7 @@ namespace PWKeeper.Core
             {
                 GetStorage.Add(item);
                 await UpdateStorageFile();
+                ExceptionMessage = "successfully added";
             }
             catch (Exception ex)
             {
@@ -116,12 +117,14 @@ namespace PWKeeper.Core
             }
             return true;
         }
-        public async Task<bool> RemoveItemAsync(StorageItemModel item)
+        public async Task<bool> RemoveItemAsync(int index)
         {
             try
             {
-                GetStorage.Remove(item);
+                GetStorage.RemoveAt(index);
                 await UpdateStorageFile();
+                ExceptionMessage = "successfully removed";
+
             } catch (Exception ex)
             {
                 ExceptionMessage = ex.Message;
@@ -133,9 +136,20 @@ namespace PWKeeper.Core
         {
             try
             {
-                GetStorage.RemoveAt(index);
-                GetStorage.Add(item);
-                await UpdateStorageFile();
+                StorageItemModel _item = GetStorage.Where((x, i) => i == index).FirstOrDefault();
+                if(_item != null)
+                {
+                    _item.Email = item.Email;
+                    _item.Login = item.Login;
+                    _item.Password = item.Password;
+                    _item.Description = item.Description;
+                    await UpdateStorageFile();
+                    ExceptionMessage = "successfully updated";
+                } else
+                {
+                    ExceptionMessage = $"update failed {item.Email} {item.Login} {item.Password} {item.Description}";
+                }
+
             } catch (Exception ex)
             {
                 ExceptionMessage = ex.Message;

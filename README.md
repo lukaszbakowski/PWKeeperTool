@@ -33,5 +33,21 @@ while first signIn if there is no existing login name it will get automatically 
 Account is working locally which you can delete
 in ./data folder.
 
+### View
+1. Main window \
+\
+![alt text](./Docs/screenshot_1.png "main view")
+
+2. SignIn \
+\
+![alt text](./Docs/screenshot_2.png "signIn")
+
+3. Storage \
+\
+![alt text](./Docs/screenshot_3.png "storage")
+
+4. Hashed data with algo
+![alt text](./Docs/screenshot_4.png "hashed data with algo")
+
 ### Features that might be added in future:
 - storing images

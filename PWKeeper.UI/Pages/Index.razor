@@ -8,52 +8,92 @@
     <div>
         <div class="form-group">
             <label for="formGroupExampleInput">Login</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input" @bind="login" disabled=@loggedIn>
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="login" @bind="login" disabled=@loggedIn>
         </div>
         <div class="form-group">
             <label for="formGroupExampleInput2">Password</label>
-            <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Another input" @bind="password" disabled=@loggedIn>
+            <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="password" disabled=@loggedIn>
         </div>
         <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
     </div>
 } else {
     @if(storage != null) {
-        int i = 0;
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Login</th>
                     <th scope="col">Password</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Action</th>
-                    <th scope="col">Action</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 
-                @foreach (var item in storage) {
-                    i++;
+                @foreach (var (item, index) in storage.Select((value,i) => (value,i))) {
+                    @if (updateIndex != index || updateIndex == null)
+                    {
                     <tr>
-                        <th scope="row">@i</th>
-                        <td>@item.Name</td>
+                        <th scope="row">@index</th>
                         <td>@item.Email</td>
+                        <td>@item.Login</td>
                         <td>@item.Password</td>
                         <td>@item.Description</td>
-                        <td>delete</td>
-                        <td>update</td>
+                        <td><button @onclick="() => UpdateState(index, item)" disabled=@btnSleep class="btn btn-secondary">update</button></td>
+                        <td><button @onclick="() => DeleteItem(index)" disabled=@btnSleep class="btn btn-danger">delete</button></td>
                     </tr>
+                    } else {
+                        @if (updateStorageItem != null)
+                        {
+                            <tr>
+                                <th scope="row">@index</th>
+                                <td>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="name" @bind="updateStorageItem.Email">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="updateStorageItem.Login">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="updateStorageItem.Password">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" id="formGroupExampleInput2" placeholder="description" @bind="updateStorageItem.Description" />
+                                </td>
+                                <td><button @onclick="() => ReplaceItem(index)" class="btn btn-success">save</button></td>
+                                <td><button @onclick="() => CancelState(index)" class="btn btn-warning">cancel</button></td>
+                            </tr>
+                        }
+                    }
                 }
+                    <tr>
+                        <th scope="row"></th>
+                        @if (addStorageItem != null)
+                        {
+                            <td>
+                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="name" @bind="addStorageItem.Email" disabled=@btnSleep>
+                            </td>
+                            <td>
+                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="addStorageItem.Login" disabled=@btnSleep>
+                            </td>
+                            <td>
+                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="addStorageItem.Password" disabled=@btnSleep>
+                            </td>
+                            <td>
+                            <textarea class="form-control" id="formGroupExampleInput2" placeholder="description" @bind="addStorageItem.Description" disabled=@btnSleep />
+                            </td>
+                            <td>
+                                <button @onclick=AddItem disabled=@btnSleep class="btn btn-primary">add</button>
+                            </td>
+                        }
+                    </tr>
             </tbody>
         </table>
     }
-    <div>
-        <button @onclick=AddItem disabled=@btnSleep>test</button>
-    </div>
-    @test.Secret
 }
-<p>
+<p class="text-center">
+    <!--@test.Secret -->
     @Storage.ExceptionMessage
 </p>
 
@@ -63,9 +103,26 @@
     private List<StorageItemModel>? storage { get; set; }
     private bool loggedIn = false;
     private bool btnSleep = false;
+    private StorageItemModel? addStorageItem;
+    private StorageItemModel? updateStorageItem;
+    private int? updateIndex = null;
 
     protected override void OnInitialized()
     {
+        addStorageItem = new()
+            {
+                Email = "",
+                Login = "",
+                Password = "",
+                Description = ""
+            };
+        updateStorageItem = new()
+            {
+                Email = "",
+                Login = "",
+                Password = "",
+                Description = ""
+            };
         base.OnInitialized();
     }
 
@@ -84,21 +141,63 @@
             StateHasChanged();
         }
     }
-    private async Task<bool> AddItem() {
-
-        btnSleep = true;
-        var item = new StorageItemModel
+    private void UpdateState(int index, StorageItemModel item) {
+        updateStorageItem = new()
             {
-                Name = "test",
-                Description = "test",
-                Password = "test",
-                Email = "test",
-                Login = "test"
+                Email = item.Email,
+                Login = item.Login,
+                Password = item.Password,
+                Description = item.Description
             };
-        await Storage.AddItemAsync(item);
+        updateIndex = index;
+        btnSleep = true;
+    }
+    private void CancelState(int index)
+    {
+        updateStorageItem = new()
+            {
+                Email = "",
+                Login = "",
+                Password = "",
+                Description = ""
+            };
+        updateIndex = null;
+        btnSleep = false;
+    }
+    private async Task<bool> AddItem() {
+        if (addStorageItem != null) {
+            btnSleep = true;
+            await Storage.AddItemAsync(addStorageItem);
+            addStorageItem = new()
+                {
+                    Email = "",
+                    Login = "",
+                    Password = "",
+                    Description = ""
+                };
+            storage = Storage.GetStorage;
+            await Task.Delay(1000);
+            btnSleep = false;
+        }
+        return true;
+    }
+    private async Task<bool> DeleteItem(int index)
+    {
+        btnSleep = true;
+        await Storage.RemoveItemAsync(index);
         storage = Storage.GetStorage;
         await Task.Delay(1000);
         btnSleep = false;
+        return true;
+    }
+    private async Task<bool> ReplaceItem(int index)
+    {
+        if (updateStorageItem !=null) {
+            await Storage.UpdateItemAsync(index, updateStorageItem);
+            storage = Storage.GetStorage;
+            await Task.Delay(1000);
+        }
+        CancelState(index);
         return true;
     }
 }
