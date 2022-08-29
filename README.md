@@ -46,7 +46,8 @@ in ./data folder.
 \
 ![alt text](./Docs/screenshot_3.png "storage")
 
-4. Hashed data with algo
+4. Encoded storage with lpwka \
+\
 ![alt text](./Docs/screenshot_4.png "hashed data with algo")
 
 ### Features that might be added in future:
