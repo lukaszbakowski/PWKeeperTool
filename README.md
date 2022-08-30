@@ -36,6 +36,7 @@ in ./data folder.
 ### View
 1. Main window \
 \
+![alt text](./Docs/screenshot_0.png "main view")
 ![alt text](./Docs/screenshot_1.png "main view")
 
 2. SignIn \
