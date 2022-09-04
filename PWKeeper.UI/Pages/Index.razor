@@ -39,9 +39,16 @@
                         <th scope="row">@index</th>
                         <td>@item.Email</td>
                         <td>@item.Login</td>
-                        <td>@item.Password</td>
+                            <td @onclick="()=> {pwShow = !pwShow;}">
+                                @if (pwShow)
+                                {
+                                    @item.Password
+                                } else {
+                                    <span>*************</span>
+                                }
+                            </td>
                         <td>@item.Description</td>
-                        <td><button @onclick="() => UpdateState(index, item)" disabled=@btnSleep class="btn btn-secondary">update</button></td>
+                        <td><button @onclick="() => UpdateState(index, item)" disabled=@btnSleep class="btn btn-secondary">edit</button></td>
                         <td><button @onclick="() => DeleteItem(index)" disabled=@btnSleep class="btn btn-danger">delete</button></td>
                     </tr>
                     } else {
@@ -50,13 +57,13 @@
                             <tr>
                                 <th scope="row">@index</th>
                                 <td>
-                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="name" @bind="updateStorageItem.Email">
+                                    <input type="email" class="form-control" id="formGroupExampleInput2" placeholder="name" @bind="updateStorageItem.Email">
                                 </td>
                                 <td>
                                     <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="updateStorageItem.Login">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="updateStorageItem.Password">
+                                    <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="updateStorageItem.Password">
                                 </td>
                                 <td>
                                     <textarea class="form-control" id="formGroupExampleInput2" placeholder="description" @bind="updateStorageItem.Description" />
@@ -72,13 +79,13 @@
                         @if (addStorageItem != null)
                         {
                             <td>
-                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="addStorageItem.Email" disabled=@btnSleep>
+                            <input type="email" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="addStorageItem.Email" disabled=@btnSleep>
                             </td>
                             <td>
                             <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="login" @bind="addStorageItem.Login" disabled=@btnSleep>
                             </td>
                             <td>
-                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="addStorageItem.Password" disabled=@btnSleep>
+                            <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="addStorageItem.Password" disabled=@btnSleep>
                             </td>
                             <td>
                             <textarea class="form-control" id="formGroupExampleInput2" placeholder="description" @bind="addStorageItem.Description" disabled=@btnSleep />
@@ -103,12 +110,14 @@
     private List<StorageItemModel>? storage { get; set; }
     private bool loggedIn = false;
     private bool btnSleep = false;
+    private bool pwShow = false;
     private StorageItemModel? addStorageItem;
     private StorageItemModel? updateStorageItem;
     private int? updateIndex = null;
 
     protected override void OnInitialized()
     {
+        storage = new();
         addStorageItem = new()
             {
                 Email = "",
@@ -123,6 +132,13 @@
                 Password = "",
                 Description = ""
             };
+
+        //pwShow = new bool[storage.Count];
+
+        //for (int i = 0; i < storage.Count; i++) {
+        //    pwShow[i] = false;
+        //}
+
         base.OnInitialized();
     }
 

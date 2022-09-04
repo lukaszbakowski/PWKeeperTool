@@ -19,18 +19,44 @@ namespace PWKeeper.Core
             } set
             {
                 var output = new StringBuilder();
-                output.Append(@".\wwwroot\data\");
+                output.Append(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+                output.Append(@"\PWKeeperTool\data\");
+                bool exists = Directory.Exists(output.ToString());
+                try
+                {
+                    if (!exists)
+                    {
+                        Directory.CreateDirectory(output.ToString());
+                    }
+                } catch (Exception ex)
+                {
+
+                }
                 output.Append(value);
                 output.Append(".txt");
+
                 _path = output.ToString();
-            } 
+            }
         }
         private string _path = string.Empty;
         private string Backup { get
             {
                 DateTime dateTime = DateTime.Now;
                 var output = new StringBuilder();
-                output.Append(@".\wwwroot\backup\");
+                output.Append(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+                output.Append(@"\PWKeeperTool\backup\");
+                bool exists = Directory.Exists(output.ToString());
+                try
+                {
+                    if (!exists)
+                    {
+                        Directory.CreateDirectory(output.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
                 output.Append(dateTime.ToString("yyyy.MM.dd.HH.mm.ss"));
                 output.Append(".txt");
                 return output.ToString();
