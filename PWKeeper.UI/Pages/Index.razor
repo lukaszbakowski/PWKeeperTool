@@ -4,20 +4,34 @@
 
 <PageTitle>Index</PageTitle>
 
-@if(!loggedIn) {
-    <div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Login</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="login" @bind="login" disabled=@loggedIn>
+@if (!loggedIn)
+{
+    <div class="d-flex align-items-center" style="height: 512px">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="form-group col-3">
+                    <label for="formGroupExampleInput">Login</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="login" @bind="login" disabled=@loggedIn>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-group col-3">
+                    <label for="formGroupExampleInput2">Password</label>
+                    <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="password" disabled=@loggedIn>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-group col-3 d-flex justify-content-end">
+                    <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput2">Password</label>
-            <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="password" disabled=@loggedIn>
-        </div>
-        <button class="btn btn-primary mt-2" @onclick=SignIn disabled=@loggedIn>SignIn</button>
     </div>
-} else {
-    @if(storage != null) {
+}
+else
+{
+    @if (storage != null)
+    {
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -31,27 +45,32 @@
                 </tr>
             </thead>
             <tbody>
-                
-                @foreach (var (item, index) in storage.Select((value,i) => (value,i))) {
+
+                @foreach (var (item, index) in storage.Select((value, i) => (value, i)))
+                {
                     @if (updateIndex != index || updateIndex == null)
                     {
-                    <tr>
-                        <th scope="row">@index</th>
-                        <td>@item.Email</td>
-                        <td>@item.Login</td>
+                        <tr>
+                            <th scope="row">@index</th>
+                            <td>@item.Email</td>
+                            <td>@item.Login</td>
                             <td @onclick="()=> {pwShow = !pwShow;}">
                                 @if (pwShow)
                                 {
                                     @item.Password
-                                } else {
+                                }
+                                else
+                                {
                                     <span>*************</span>
                                 }
                             </td>
-                        <td>@item.Description</td>
-                        <td><button @onclick="() => UpdateState(index, item)" disabled=@btnSleep class="btn btn-secondary">edit</button></td>
-                        <td><button @onclick="() => DeleteItem(index)" disabled=@btnSleep class="btn btn-danger">delete</button></td>
-                    </tr>
-                    } else {
+                            <td>@item.Description</td>
+                            <td><button @onclick="() => UpdateState(index, item)" disabled=@btnSleep class="btn btn-secondary">edit</button></td>
+                            <td><button @onclick="() => DeleteItem(index)" disabled=@btnSleep class="btn btn-danger">delete</button></td>
+                        </tr>
+                    }
+                    else
+                    {
                         @if (updateStorageItem != null)
                         {
                             <tr>
@@ -74,27 +93,27 @@
                         }
                     }
                 }
-                    <tr>
-                        <th scope="row"></th>
-                        @if (addStorageItem != null)
-                        {
-                            <td>
+                <tr>
+                    <th scope="row"></th>
+                    @if (addStorageItem != null)
+                    {
+                        <td>
                             <input type="email" class="form-control" id="formGroupExampleInput2" placeholder="email" @bind="addStorageItem.Email" disabled=@btnSleep>
-                            </td>
-                            <td>
+                        </td>
+                        <td>
                             <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="login" @bind="addStorageItem.Login" disabled=@btnSleep>
-                            </td>
-                            <td>
+                        </td>
+                        <td>
                             <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="addStorageItem.Password" disabled=@btnSleep>
-                            </td>
-                            <td>
+                        </td>
+                        <td>
                             <textarea class="form-control" id="formGroupExampleInput2" placeholder="description" @bind="addStorageItem.Description" disabled=@btnSleep />
-                            </td>
-                            <td>
-                                <button @onclick=AddItem disabled=@btnSleep class="btn btn-primary">add</button>
-                            </td>
-                        }
-                    </tr>
+                        </td>
+                        <td>
+                            <button @onclick=AddItem disabled=@btnSleep class="btn btn-primary">add</button>
+                        </td>
+                    }
+                </tr>
             </tbody>
         </table>
     }
@@ -133,17 +152,12 @@
                 Description = ""
             };
 
-        //pwShow = new bool[storage.Count];
-
-        //for (int i = 0; i < storage.Count; i++) {
-        //    pwShow[i] = false;
-        //}
-
         base.OnInitialized();
     }
 
 
-    private async void SignIn() { 
+    private async void SignIn()
+    {
         if ((login != null) && (password != null) && (login != string.Empty) && (password != string.Empty))
         {
             if (await Storage.Build(login, new LookyAlgo(password)))
@@ -157,7 +171,8 @@
             StateHasChanged();
         }
     }
-    private void UpdateState(int index, StorageItemModel item) {
+    private void UpdateState(int index, StorageItemModel item)
+    {
         updateStorageItem = new()
             {
                 Email = item.Email,
@@ -180,8 +195,10 @@
         updateIndex = null;
         btnSleep = false;
     }
-    private async Task<bool> AddItem() {
-        if (addStorageItem != null) {
+    private async Task<bool> AddItem()
+    {
+        if (addStorageItem != null)
+        {
             btnSleep = true;
             await Storage.AddItemAsync(addStorageItem);
             addStorageItem = new()
@@ -208,7 +225,8 @@
     }
     private async Task<bool> ReplaceItem(int index)
     {
-        if (updateStorageItem !=null) {
+        if (updateStorageItem != null)
+        {
             await Storage.UpdateItemAsync(index, updateStorageItem);
             storage = Storage.GetStorage;
             await Task.Delay(1000);
