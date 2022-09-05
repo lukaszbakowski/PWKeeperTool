@@ -24,9 +24,4 @@
         </Content>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="wwwroot\data\" />
-      <Folder Include="wwwroot\backup\" />
-    </ItemGroup>
-
 </Project>

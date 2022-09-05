@@ -8,16 +8,43 @@
 {
     <div class="d-flex align-items-center" style="height: 512px">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="form-group col-3">
-                    <label for="formGroupExampleInput">Login</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="login" @bind="login" disabled=@loggedIn>
+            @if (!Storage.CustomStorage)
+            {
+                <div class="row justify-content-center">
+                    <div class="form-group col-3">
+                        <label for="formGroupExampleInput">Login</label>
+                        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="login" @bind="login" disabled=@Storage.CustomStorage>
+                    </div>
                 </div>
-            </div>
+            } else
+            {
+                <div class="row justify-content-center">
+                    <div class="form-group col-3">
+                        <label for="filePath">Storage</label>
+                        <input type="text" class="form-control" id="filePath" placeholder=".dat file location path" @bind="login" disabled=@Storage.CustomPath>
+                    </div>
+                </div>
+            }
             <div class="row justify-content-center">
                 <div class="form-group col-3">
                     <label for="formGroupExampleInput2">Password</label>
                     <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="password" @bind="password" disabled=@loggedIn>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-group col-3">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" @bind="Storage.CustomStorage" disabled="true">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Custom storage
+                    </label>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-group col-3">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" @bind="Storage.AutoBackup">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Auto Backup
+                    </label>
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -158,19 +185,32 @@ else
 
     private async void SignIn()
     {
-        if ((login != null) && (password != null) && (login != string.Empty) && (password != string.Empty))
+        if ((password != null) && (password != string.Empty))
         {
-            if (await Storage.Build(login, new LookyAlgo(password)))
+            if (Storage.CustomStorage)
             {
-                storage = Storage.GetStorage;
-                loggedIn = true;
-                login = string.Empty;
-                password = string.Empty;
+                if (await Storage.Build(new LookyAlgo(password)))
+                {
+                    storage = Storage.GetStorage;
+                    loggedIn = true;
+                    login = string.Empty;
+                    password = string.Empty;
+                }
             }
-
+            else if ((login != null) && (login != string.Empty))
+            {
+                if (await Storage.Build(login, new LookyAlgo(password)))
+                {
+                    storage = Storage.GetStorage;
+                    loggedIn = true;
+                    login = string.Empty;
+                    password = string.Empty;
+                }
+            }
             StateHasChanged();
         }
     }
+
     private void UpdateState(int index, StorageItemModel item)
     {
         updateStorageItem = new()

@@ -14,4 +14,8 @@
     <ProjectReference Include="..\PWKeeper\PWKeeper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
+
 </Project>

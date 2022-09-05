@@ -15,6 +15,10 @@ namespace PWKeeper.Core
         private IAlgorithm? algorithm;
         private string Path { get
             {
+                if(CustomStorage && (CustomPath != null))
+                {
+                    return CustomPath;
+                }
                 return _path;
             } set
             {
@@ -33,7 +37,7 @@ namespace PWKeeper.Core
 
                 }
                 output.Append(value);
-                output.Append(".txt");
+                output.Append(".dat");
 
                 _path = output.ToString();
             }
@@ -58,12 +62,15 @@ namespace PWKeeper.Core
 
                 }
                 output.Append(dateTime.ToString("yyyy.MM.dd.HH.mm.ss"));
-                output.Append(".txt");
+                output.Append(".dat");
                 return output.ToString();
             }
         }
         public List<StorageItemModel> GetStorage { get; private set; }
         public string ExceptionMessage { get; private set; }
+        public bool AutoBackup { get; set; } = true;
+        public bool CustomStorage { get; set; } = false;
+        public string CustomPath { get; set; }
         public StorageHandler() {
             GetStorage = new();
         }
@@ -71,13 +78,18 @@ namespace PWKeeper.Core
         {
             this.algorithm = algorithm;
             Path = login;
+            return await PartialBuild();
+        }
+        public async Task<bool> Build(IAlgorithm algorithm)
+        {
+            this.algorithm = algorithm;
+            return await PartialBuild();
+        }
 
+        private async Task<bool> PartialBuild()
+        {
             try
             {
-                if(login == string.Empty || login == null || algorithm == null)
-                {
-                    throw new Exception("bad input login or algo");
-                }
                 if (File.Exists(Path))
                 {
                     string fileContent = await File.ReadAllTextAsync(Path);
@@ -93,13 +105,15 @@ namespace PWKeeper.Core
                     await UpdateStorageFile();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ExceptionMessage = "singIn failed: " + ex.Message;
                 return false;
             }
             ExceptionMessage = "sueccessfully loged in";
             return true;
         }
+
         private async Task<string> Decode(string input)
         {
             if(algorithm != null)
@@ -119,7 +133,10 @@ namespace PWKeeper.Core
                     string output = await algorithm.Encode(input);
 
                     await File.WriteAllTextAsync(Path, output);
-                    await File.WriteAllTextAsync(Backup, output);
+                    if(AutoBackup)
+                    {
+                        await File.WriteAllTextAsync(Backup, output);
+                    }
                 }
             } catch(Exception ex) {
                 ExceptionMessage = ex.Message;
